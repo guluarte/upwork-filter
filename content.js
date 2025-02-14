@@ -31,9 +31,6 @@ function applyFilters() {
       const rating = ratingMatch ? parseFloat(ratingMatch[1]) : 0;
       if (rating < currentSettings.minRating) {
         shouldHide = true;
-        console.log(
-          `Hiding job due to low rating: ${rating} < ${currentSettings.minRating}`,
-        );
       }
     }
 
@@ -43,13 +40,11 @@ function applyFilters() {
       const spend = parseSpend(spendText);
       if (spend < currentSettings.minSpend) {
         shouldHide = true;
-        console.log(
-          `Hiding job due to low spend: ${spend} < ${currentSettings.minSpend}`,
-        );
       }
     }
 
-    card.style.display = shouldHide ? "none" : "block";
+    card.style.opacity = shouldHide ? "0.5" : "1";
+    card.style.pointerEvents = shouldHide ? "none" : "auto";
   });
 }
 
