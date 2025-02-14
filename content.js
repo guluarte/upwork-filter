@@ -14,14 +14,18 @@ chrome.storage.onChanged.addListener((changes) => {
 });
 
 function applyFilters() {
-  const jobCards = document.querySelectorAll("section.air3-card-section");
+  const jobCards = document.querySelectorAll(
+    "section.air3-card-section, article[data-ev-label='search_results_impression']",
+  );
 
   jobCards.forEach((card) => {
-    const ratingElement = card.querySelector(
-      ".air3-rating-background .sr-only",
-    );
+    const ratingElement =
+      card.querySelector(".air3-rating-background .sr-only") ??
+      card.querySelector(".air3-rating-value-text");
 
-    const spendElement = card.querySelector('[data-test="formatted-amount"]');
+    const spendElement =
+      card.querySelector('[data-test="formatted-amount"]') ??
+      card.querySelector('[data-test="total-spent"]');
     let shouldHide = false;
 
     // Rating filtering
