@@ -15,7 +15,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
 function applyFilters() {
   const jobCards = document.querySelectorAll(
-    "section.air3-card-section, article[data-ev-label='search_results_impression']",
+    "[data-test='job-tile-list'] > section.air3-card-section, article[data-ev-label='search_results_impression']",
   );
 
   jobCards.forEach((card) => {
@@ -48,7 +48,6 @@ function applyFilters() {
     }
 
     card.style.opacity = shouldHide ? "0.5" : "1";
-    card.style.pointerEvents = shouldHide ? "none" : "auto";
   });
 }
 
