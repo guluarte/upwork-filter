@@ -37,3 +37,6 @@ jspm_packages
 .node_repl_history
 *Zone.Identifier
 
+.aider.tags.cache.v4
+.aider.input.history
+.aider.chat.history.md
