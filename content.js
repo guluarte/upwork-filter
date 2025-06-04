@@ -1,6 +1,6 @@
 // Updated content.js with correct selectors
 let observer;
-let currentSettings = {};
+let currentSettings = { keywords: "vibe" };
 
 chrome.storage.sync.get(["minRating", "minSpend"], (data) => {
   currentSettings = data;
@@ -10,6 +10,7 @@ chrome.storage.sync.get(["minRating", "minSpend"], (data) => {
 chrome.storage.onChanged.addListener((changes) => {
   if (changes.minRating) currentSettings.minRating = changes.minRating.newValue;
   if (changes.minSpend) currentSettings.minSpend = changes.minSpend.newValue;
+  if (changes.keywords) currentSettings.keywords = changes.keywords.newValue;
   applyFilters();
 });
 
@@ -26,6 +27,14 @@ function applyFilters() {
     const spendElement =
       card.querySelector('[data-test="formatted-amount"]') ??
       card.querySelector('[data-test="total-spent"]');
+    const titleElement =
+      card.querySelector('[data-test="job-title"]') ??
+      card.querySelector(".job-tile-title");
+
+    const descriptionElement =
+      card.querySelector('[data-test="job-description-text"]') ??
+      card.querySelector(".job-description");
+
     let shouldHide = false;
 
     // Rating filtering
@@ -43,6 +52,30 @@ function applyFilters() {
       const spendText = spendElement?.textContent?.trim() || "$0";
       const spend = parseSpend(spendText);
       if (spend < currentSettings.minSpend) {
+        shouldHide = true;
+      }
+    }
+
+    // Keyword filtering
+    if (currentSettings.keywords && currentSettings.keywords.trim()) {
+      const keywords = currentSettings.keywords
+        .split(",")
+        .map((kw) => kw.trim().toLowerCase());
+      const title = titleElement?.textContent?.toLowerCase() || "";
+      const description = descriptionElement?.textContent?.toLowerCase() || "";
+
+      let hasKeyword = false;
+      for (const keyword of keywords) {
+        if (
+          keyword &&
+          (title.includes(keyword) || description.includes(keyword))
+        ) {
+          hasKeyword = true;
+          break;
+        }
+      }
+
+      if (hasKeyword) {
         shouldHide = true;
       }
     }
