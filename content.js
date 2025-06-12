@@ -1,9 +1,27 @@
 // Updated content.js with correct selectors
 let observer;
-let currentSettings = { keywords: "vibe" };
+let currentSettings = {};
+let settingsLoaded = false;
 
-chrome.storage.sync.get(["minRating", "minSpend"], (data) => {
-  currentSettings = data;
+// Set up observer first to catch DOM changes while settings load
+observer = new MutationObserver(() => {
+  if (settingsLoaded) applyFilters();
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+  attributes: false,
+  characterData: false,
+});
+
+chrome.storage.sync.get(["minRating", "minSpend", "keywords"], (data) => {
+  currentSettings = {
+    minRating: data.minRating || 4.0,
+    minSpend: data.minSpend || 1000,
+    keywords: data.keywords || ""
+  };
+  settingsLoaded = true;
   applyFilters();
 });
 
@@ -103,14 +121,3 @@ function parseSpend(text) {
   return amount * multiplier;
 }
 
-// MutationObserver remains the same
-observer = new MutationObserver((mutations) => {
-  applyFilters();
-});
-
-observer.observe(document.body, {
-  childList: true,
-  subtree: true,
-  attributes: false,
-  characterData: false,
-});
